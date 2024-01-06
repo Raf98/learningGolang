@@ -18,8 +18,8 @@ func Logger(proximaFuncao http.HandlerFunc) http.HandlerFunc {
 // Autenticar verifica a existência de cookies
 func Autenticar(proximaFuncao http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if coo, erro := cookies.Ler(r); erro != nil {
-			fmt.Println(coo, erro)
+		if cookie, erro := cookies.Ler(r); erro != nil {
+			fmt.Println(cookie, erro)
 			http.Redirect(w, r, "/login", http.StatusFound) //302
 			return
 		}

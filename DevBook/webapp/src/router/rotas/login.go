@@ -22,6 +22,6 @@ var rotasLogin = []Rota{
 		URI:                "/login",
 		Metodo:             http.MethodPost,
 		Funcao:             controllers.FazerLogin,
-		RequerAutenticacao: true,
+		RequerAutenticacao: false,
 	},
 }
