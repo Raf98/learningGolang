@@ -19,7 +19,7 @@ function fazerLogin(evento) {
         if (data.status === 200) {
             window.location = '/home';
         } else {
-            alert("Usuário ou senha inválidos!");
+            Swal.fire('Ops...', 'Usuário ou senha incorretos!', 'error');
         }
     });
 }

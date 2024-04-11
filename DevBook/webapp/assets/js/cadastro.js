@@ -6,7 +6,7 @@ const criarUsuario = (evento) => {
     evento.preventDefault();
 
     if (getValue('senha') != getValue('confirmar-senha')) {
-        alert("As senhas não coincidem!");
+        Swal.fire('Ops...', 'As senhas não coincidem!', 'error');
         return;
     }
 
@@ -20,10 +20,24 @@ const criarUsuario = (evento) => {
             senha: getValue('senha')
         }
     }).done(function () {
-        alert("Usuário cadastrado com sucesso!");
+        Swal.fire('Sucesso!', 'Usuário cadastrado com sucesso!', 'success')
+            .then(() => {
+                $.ajax({
+                    url: '/login',
+                    method: 'POST',
+                    data: {
+                        email: $('#email').val(),
+                        senha: $('#senha').val()
+                    }
+                }).done(() => {
+                    window.location = '/home';
+                }).fail(() => {
+                    Swal.fire('Ops...', 'Erro ao autenticar o usuário!', 'error')
+                })
+            });
     }).fail(function(erro) {
         console.log(erro);
-        alert("Erro ao cadastrar o usuário!");
+        Swal.fire('Ops...', 'Erro ao cadastrar o usuário!', 'error');
     })
 }
 
