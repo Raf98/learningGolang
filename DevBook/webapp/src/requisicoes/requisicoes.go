@@ -1,6 +1,7 @@
 package requisicoes
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"webapp/src/cookies"
@@ -20,6 +21,10 @@ func FazerRequisicaoComAutenticacao(r *http.Request, metodo, url string, dados i
 	response, erro := client.Do(request)
 	if erro != nil {
 		return nil, erro
+	}
+
+	if response.StatusCode == 401 {
+		return nil, errors.New("Token inválido!")
 	}
 
 	return response, nil

@@ -38,6 +38,10 @@ func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
 	url := fmt.Sprintf("%s/publicacoes", config.APIURL)
 	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
 	if erro != nil {
+		if erro.Error() == "Token inválido!" {
+			FazerLogout(w, r)
+			return
+		}
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
@@ -132,14 +136,19 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cookie, _ := cookies.Ler(r)
+	usuarioLogadoID, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	if usuarioID == usuarioLogadoID {
+		http.Redirect(w, r, "/perfil", 302)
+		return
+	}
+
 	usuario, erro := modelos.BuscarUsuarioCompleto(usuarioID, r)
 	if erro != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
-
-	cookie, _ := cookies.Ler(r)
-	usuarioLogadoID, _ := strconv.ParseUint(cookie["id"], 10, 64)
 
 	utils.ExecutarTemplate(w, "usuario.html", struct {
 		Usuario         modelos.Usuario
@@ -148,4 +157,18 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		Usuario:         usuario,
 		UsuarioLogadoID: usuarioLogadoID,
 	})
+}
+
+// CarregarPerfilDoUsuario carrega a página do perfil do usuário logado
+func CarregarPerfilDoUsuarioLogado(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := cookies.Ler(r)
+	usuarioID, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	usuario, erro := modelos.BuscarUsuarioCompleto(usuarioID, r)
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	utils.ExecutarTemplate(w, "perfil.html", usuario)
 }
