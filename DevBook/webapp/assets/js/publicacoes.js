@@ -84,7 +84,7 @@ function atualizarPublicacao() {
             conteudo: $('#conteudo').val(),
         }
     }).done(() => {
-        Swal.fire('Sucesso!', 'Publicação criada com sucesso!', 'success')
+        Swal.fire('Sucesso!', 'Publicação editada com sucesso!', 'success')
             .then(() => window.location = '/home');
     }).fail(() => {
         Swal.fire('Ops...', 'Erro ao editar a publicação!', 'error');
